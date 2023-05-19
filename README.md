@@ -1,4 +1,4 @@
-# Maria Radio Archiver
+# Mária Rádió Visszatekintő
 
 ## Rövid leírás
 
