@@ -6,6 +6,7 @@ A Maria Radio Archiver egy Javaban íródott Android alkalmazás, amely családi
 A célom az volt, hogy egy olyan alkalmazást hozzak létre, ami képes letölteni a rádiócsatorna weboldalára feltöltött hangfelvételeket dátum alapján,
 majd a letöltött felvételeket ki tudja listázni és lejátszani egy egyszerű kezelőfelületen, amit idősebbek is tudnak használni.
 
+
 ## Képek
 
 <p float="center">
