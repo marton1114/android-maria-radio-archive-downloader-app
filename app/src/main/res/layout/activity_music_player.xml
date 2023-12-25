@@ -93,88 +93,127 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_panel_background"
             android:backgroundTint="@color/glass_white"
-            android:paddingStart="10dp"
-            android:paddingTop="20dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="20dp">
+            app:layout_constraintEnd_toStartOf="@+id/pause_play"
+            app:layout_constraintStart_toStartOf="@+id/pause_play">
 
             <SeekBar
                 android:id="@+id/seek_bar"
-                android:layout_width="match_parent"
+                android:layout_width="351dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/black" />
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/current_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/seek_bar"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:text="0:00"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar" />
+
 
             <TextView
                 android:id="@+id/total_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/seek_bar"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
                 android:text="0:00"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/jumpBackward"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/total_time"
-                android:layout_marginTop="5dp"
-                android:padding="10dp">
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circle_button_background"
+                android:backgroundTint="#FF518C"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar"
+                app:srcCompat="@drawable/baseline_replay_5_24" />
 
-                <ImageView
-                    android:id="@+id/previous"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/circle_button_background"
-                    android:backgroundTint="@color/blue"
-                    android:src="@drawable/ic_baseline_skip_previous_24"
-                    app:srcCompat="@drawable/ic_baseline_skip_previous_24" />
+            <ImageView
+                android:id="@+id/previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circle_button_background"
+                android:backgroundTint="@color/blue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/pause_play"
+                app:layout_constraintStart_toEndOf="@+id/jumpBackward"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar"
+                app:srcCompat="@drawable/baseline_skip_previous_24" />
 
-                <ImageView
-                    android:id="@+id/next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/circle_button_background"
-                    android:backgroundTint="@color/blue"
-                    android:src="@drawable/ic_baseline_skip_next_24"
-                    app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
+            <ImageView
+                android:id="@+id/next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circle_button_background"
+                android:backgroundTint="@color/blue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/jumpForward"
+                app:layout_constraintStart_toEndOf="@+id/pause_play"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar"
+                app:srcCompat="@drawable/baseline_skip_next_24" />
 
-                <ImageView
-                    android:id="@+id/pause_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/circle_button_background"
-                    android:backgroundTint="@color/blue"
-                    android:src="@drawable/ic_baseline_pause_24" />
+            <ImageView
+                android:id="@+id/pause_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circle_button_background"
+                android:backgroundTint="@color/blue"
+                android:src="@drawable/ic_baseline_pause_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar"
+                app:srcCompat="@drawable/ic_baseline_pause_24" />
 
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/jumpForward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circle_button_background"
+                android:backgroundTint="#FF518C"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar"
+                app:srcCompat="@drawable/baseline_forward_5_24" />
 
-        </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

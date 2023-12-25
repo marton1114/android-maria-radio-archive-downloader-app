@@ -19,7 +19,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
     TextView titleTextView, currentTimeTextView, totalTimeTextView;
     SeekBar seekBar;
-    ImageView pausePlay, nextButton, previousButton, musicIcon, backButton;
+    ImageView pausePlay, nextButton, previousButton, musicIcon, backButton, jumpForward, jumpBackward;
     ArrayList<AudioModel> recordingList;
     public static AudioModel currentRecording = new AudioModel("", "", "");
     public MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
@@ -41,6 +41,8 @@ public class MusicPlayerActivity extends AppCompatActivity {
         previousButton = findViewById(R.id.previous);
         musicIcon = findViewById(R.id.music_icon_big);
         backButton = findViewById(R.id.downloadPageBackButton);
+        jumpBackward = findViewById(R.id.jumpBackward);
+        jumpForward = findViewById(R.id.jumpForward);
 
         titleTextView.setSelected(true);
 
@@ -82,6 +84,25 @@ public class MusicPlayerActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
+        });
+
+        jumpBackward.setOnClickListener(v -> {
+            int currentPosition = mediaPlayer.getCurrentPosition();
+
+            if (currentPosition - 5000 >= 0)
+                mediaPlayer.seekTo(currentPosition - 5000);
+            else
+                mediaPlayer.seekTo(0);
+        });
+
+        jumpForward.setOnClickListener(v -> {
+            int currentPosition = mediaPlayer.getCurrentPosition();
+            int maxPosition = mediaPlayer.getDuration();
+
+            if (currentPosition + 5000 <= maxPosition)
+                mediaPlayer.seekTo(currentPosition + 5000);
+            else
+                mediaPlayer.seekTo(maxPosition);
         });
     }
 
