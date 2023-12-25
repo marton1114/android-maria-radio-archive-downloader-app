@@ -24,6 +24,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,13 +58,15 @@ public class MainActivity extends AppCompatActivity {
 
     TextView datePickerTextview, intervalTextView;
     Button leftDatePickerButton, rightDatePickerButton, leftIntervalButton, rightIntervalButton,
-            downloadButton, savedRecordingsButton;
+            downloadButton;
+
+    ImageView downloadPageBackButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Objects.requireNonNull(getSupportActionBar()).hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -85,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
             leftIntervalButton = findViewById(R.id.intervalLeftButton);
             rightIntervalButton = findViewById(R.id.intervalRightButton);
             downloadButton = findViewById(R.id.downloadButton);
-            savedRecordingsButton = findViewById(R.id.savedRecordingsButton);
+
+            downloadPageBackButton = findViewById(R.id.downloadPageBackButton);
         }
 
         // initializing
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         // onClickListeners
         {
+            downloadPageBackButton.setOnClickListener(v -> onBackPressed());
             leftDatePickerButton.setOnClickListener(view -> {
                 if (calendar.getTimeInMillis() > 1656277200000L) {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -140,11 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
             downloadButton.setOnClickListener(view -> {
                 initDownload();
-            });
-
-            savedRecordingsButton.setOnClickListener(view -> {
-                Intent intent = new Intent(this, RecordingsActivity.class);
-                startActivity(intent);
             });
         }
     }

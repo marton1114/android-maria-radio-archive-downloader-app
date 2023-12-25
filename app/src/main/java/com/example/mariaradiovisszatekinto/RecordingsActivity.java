@@ -30,14 +30,12 @@ public class RecordingsActivity extends AppCompatActivity {
 
     ImageView addButton;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
-
-        Objects.requireNonNull(getSupportActionBar()).setTitle( (CharSequence)"Felvételek");
 
         recyclerView = findViewById(R.id.recyclerView);
         notFoundTextView = findViewById(R.id.notFoundTextView);
@@ -53,10 +51,12 @@ public class RecordingsActivity extends AppCompatActivity {
             return;
         }
 
-        fillList();
+//        fillList();
     }
 
     public void fillList() {
+        recordingList.clear(); // not the best solution, I will change it in the future
+
         String[] projection = {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.DATA,
@@ -127,5 +127,7 @@ public class RecordingsActivity extends AppCompatActivity {
         if (recyclerView != null) {
             recyclerView.setAdapter(new RecordingListAdapter(recordingList, getApplicationContext()));
         }
+
+        fillList();
     }
 }

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +40,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.next);
         previousButton = findViewById(R.id.previous);
         musicIcon = findViewById(R.id.music_icon_big);
-        backButton = findViewById(R.id.backButton);
+        backButton = findViewById(R.id.downloadPageBackButton);
 
         titleTextView.setSelected(true);
 
