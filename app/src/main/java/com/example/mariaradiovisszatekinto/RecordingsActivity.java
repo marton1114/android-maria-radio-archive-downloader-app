@@ -1,12 +1,14 @@
 package com.example.mariaradiovisszatekinto;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,16 +28,25 @@ public class RecordingsActivity extends AppCompatActivity {
     TextView notFoundTextView;
     ArrayList<AudioModel> recordingList = new ArrayList<>();
 
+    ImageView addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
+        Objects.requireNonNull(getSupportActionBar()).hide();
+
 
         Objects.requireNonNull(getSupportActionBar()).setTitle( (CharSequence)"Felvételek");
 
         recyclerView = findViewById(R.id.recyclerView);
         notFoundTextView = findViewById(R.id.notFoundTextView);
+        addButton = findViewById(R.id.addButton);
+
+        addButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
 
         if (! checkPermission()) {
             requestPermission();

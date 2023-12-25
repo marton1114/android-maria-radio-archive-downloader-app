@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Objects.requireNonNull(getSupportActionBar()).hide();
+//        Objects.requireNonNull(getSupportActionBar()).hide();
 
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -223,8 +223,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                Intent recordingsActivityIntent = new Intent(MainActivity.this, RecordingsActivity.class);
-                startActivity(recordingsActivityIntent);
+//                Intent recordingsActivityIntent = new Intent(MainActivity.this, RecordingsActivity.class);
+//                startActivity(recordingsActivityIntent);
+                onBackPressed();
             }
         };
 
