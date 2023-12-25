@@ -13,13 +13,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class MusicPlayerActivity extends AppCompatActivity {
 
     TextView titleTextView, currentTimeTextView, totalTimeTextView;
     SeekBar seekBar;
-    ImageView pausePlay, nextButton, previousButton, musicIcon;
+    ImageView pausePlay, nextButton, previousButton, musicIcon, backButton;
     ArrayList<AudioModel> recordingList;
     public static AudioModel currentRecording = new AudioModel("", "", "");
     public MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
@@ -28,6 +29,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_player);
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         mediaPlayer = MyMediaPlayer.getInstance();
 
@@ -39,6 +41,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.next);
         previousButton = findViewById(R.id.previous);
         musicIcon = findViewById(R.id.music_icon_big);
+        backButton = findViewById(R.id.backButton);
 
         titleTextView.setSelected(true);
 
@@ -99,6 +102,8 @@ public class MusicPlayerActivity extends AppCompatActivity {
         pausePlay.setOnClickListener(v -> pausePlay());
         nextButton.setOnClickListener(v -> playNextRecording());
         previousButton.setOnClickListener(v -> playPreviousRecording());
+
+        backButton.setOnClickListener(v -> onBackPressed());
     }
 
     private void playRecording() {
