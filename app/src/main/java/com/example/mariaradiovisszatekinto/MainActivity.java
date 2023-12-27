@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
 //                Intent recordingsActivityIntent = new Intent(MainActivity.this, RecordingsActivity.class);
 //                startActivity(recordingsActivityIntent);
-                onBackPressed();
+                finish();
             }
         };
 

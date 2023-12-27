@@ -1,6 +1,8 @@
 package com.example.mariaradiovisszatekinto;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
@@ -20,11 +22,13 @@ import java.util.ArrayList;
 
 public class RecordingListAdapter extends RecyclerView.Adapter<RecordingListAdapter.ViewHolder> {
 
-    ArrayList<AudioModel> recordingList;
-    Context context;
+    private ArrayList<AudioModel> recordingList;
+    private int isDeleteActivated;
+    private Context context;
 
-    public RecordingListAdapter(ArrayList<AudioModel> recordingList, Context context) {
+    public RecordingListAdapter(ArrayList<AudioModel> recordingList, int isDeleteActivated, Context context) {
         this.recordingList = recordingList;
+        this.isDeleteActivated = isDeleteActivated;
         this.context = context;
     }
 
@@ -42,10 +46,12 @@ public class RecordingListAdapter extends RecyclerView.Adapter<RecordingListAdap
         holder.titleTextView.setText(recordingData.getTitle());
 
         if (MyMediaPlayer.currentIndex == position && MyMediaPlayer.instance.isPlaying()) {
-            holder.titleTextView.setTextColor(Color.parseColor("#FF0000"));
+            holder.titleTextView.setTextColor(Color.parseColor("#FF518C"));
         } else {
             holder.titleTextView.setTextColor(Color.parseColor("#000000"));
         }
+
+        holder.deleteButton.setVisibility(isDeleteActivated);
 
         holder.titleTextView.setOnClickListener(view -> {
 
@@ -58,7 +64,7 @@ public class RecordingListAdapter extends RecyclerView.Adapter<RecordingListAdap
         });
 
         holder.deleteButton.setOnClickListener(view -> {
-            deleteRecording(recordingList, holder.getAdapterPosition());
+             deleteRecording(recordingList, holder.getAdapterPosition());
         });
 
     }
@@ -67,9 +73,9 @@ public class RecordingListAdapter extends RecyclerView.Adapter<RecordingListAdap
 
         File file = new File(recordingList.get(adapterPosition).path);
         if (file.delete()) {
+            notifyItemRemoved(adapterPosition);
             recordingList.remove(adapterPosition);
 
-            notifyItemRemoved(adapterPosition);
             MyMediaPlayer.getInstance().pause();
         }
         

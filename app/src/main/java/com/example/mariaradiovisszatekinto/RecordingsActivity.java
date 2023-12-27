@@ -1,9 +1,16 @@
 package com.example.mariaradiovisszatekinto;
 
+import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -15,6 +22,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +36,9 @@ public class RecordingsActivity extends AppCompatActivity {
     TextView notFoundTextView;
     ArrayList<AudioModel> recordingList = new ArrayList<>();
 
-    ImageView addButton;
+    ImageView addButton, allowDeleteButton;
+
+    int isDeleteActivated = INVISIBLE;
 
 
     @Override
@@ -40,21 +50,33 @@ public class RecordingsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         notFoundTextView = findViewById(R.id.notFoundTextView);
         addButton = findViewById(R.id.addButton);
+        allowDeleteButton = findViewById(R.id.allowDeleteButton);
 
         addButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
 
+        allowDeleteButton.setOnClickListener(view -> {
+            if (isDeleteActivated == INVISIBLE) {
+                isDeleteActivated = VISIBLE;
+                allowDeleteButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.red)));
+            }
+            else {
+                isDeleteActivated = INVISIBLE;
+                allowDeleteButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.pink)));
+            }
+            fillList(isDeleteActivated);
+        });
+
+
         if (! checkPermission()) {
             requestPermission();
-            return;
         }
-
-//        fillList();
     }
 
-    public void fillList() {
+
+    public void fillList(int isDeleteActivated) {
         recordingList.clear(); // not the best solution, I will change it in the future
 
         String[] projection = {
@@ -84,11 +106,11 @@ public class RecordingsActivity extends AppCompatActivity {
                 }
 
                 if (recordingList.size() == 0) {
-                    notFoundTextView.setVisibility(View.VISIBLE);
+                    notFoundTextView.setVisibility(VISIBLE);
                 } else {
                     // recycler
                     recyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    recyclerView.setAdapter(new RecordingListAdapter(recordingList, getApplicationContext()));
+                    recyclerView.setAdapter(new RecordingListAdapter(recordingList, isDeleteActivated, getApplicationContext()));
 
                     notFoundTextView.setVisibility(View.GONE);
                 }
@@ -116,7 +138,7 @@ public class RecordingsActivity extends AppCompatActivity {
             Toast.makeText(RecordingsActivity.this, "Olvasási engedély szükséges, kérlek engedélyezd a beállításokban!", Toast.LENGTH_LONG).show();
         } else {
             ActivityCompat.requestPermissions(RecordingsActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
-            fillList();
+            fillList(isDeleteActivated);
         }
     }
 
@@ -125,9 +147,9 @@ public class RecordingsActivity extends AppCompatActivity {
         super.onResume();
 
         if (recyclerView != null) {
-            recyclerView.setAdapter(new RecordingListAdapter(recordingList, getApplicationContext()));
+            recyclerView.setAdapter(new RecordingListAdapter(recordingList, isDeleteActivated, getApplicationContext()));
         }
 
-        fillList();
+        fillList(isDeleteActivated);
     }
 }

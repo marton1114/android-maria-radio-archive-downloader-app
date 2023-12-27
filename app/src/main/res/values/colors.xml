@@ -10,4 +10,6 @@
     <color name="blue">#0D66FF</color>
     <color name="dark_blue">#0C44A5</color>
     <color name="glass_white">#B7FFFFFF</color>
+    <color name="pink">#FF518C</color>
+    <color name="red">#C80000</color>
 </resources>
