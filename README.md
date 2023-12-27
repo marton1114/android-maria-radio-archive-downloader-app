@@ -10,7 +10,8 @@ majd a letöltött felvételeket ki tudja listázni és lejátszani egy egyszer�
 ## Képek
 
 <p float="center">
-  <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/menu.jpg" width="25%" height="25%"> 
-  <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/list.jpg" width="25%" height="25%">
+  <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/list.jpg" width="25%" height="25%"> 
+  <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/delete.jpg" width="25%" height="25%">
+  <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/add.jpg" width="25%" height="25%"> 
   <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/player.jpg" width="25%" height="25%"> 
 </p>
