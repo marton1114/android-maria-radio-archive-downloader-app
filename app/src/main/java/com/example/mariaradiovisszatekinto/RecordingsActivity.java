@@ -96,28 +96,31 @@ public class RecordingsActivity extends AppCompatActivity {
                 null);
 
 
-        while (cursor.moveToNext()) {
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
 
-            if (checkFileDirection(cursor.getString(1))) {
-                AudioModel recordingData = new AudioModel(cursor.getString(1), cursor.getString(0), cursor.getString(2));
+                if (checkFileDirection(cursor.getString(1))) {
+                    AudioModel recordingData = new AudioModel(cursor.getString(1), cursor.getString(0), cursor.getString(2));
 
-                if (new File(recordingData.getPath()).exists()) {
-                    recordingList.add(recordingData);
-                }
+                    if (new File(recordingData.getPath()).exists()) {
+                        recordingList.add(recordingData);
+                    }
 
-                if (recordingList.size() == 0) {
-                    notFoundTextView.setVisibility(VISIBLE);
-                } else {
-                    // recycler
-                    recyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    recyclerView.setAdapter(new RecordingListAdapter(recordingList, isDeleteActivated, getApplicationContext()));
+                    if (recordingList.size() == 0) {
+                        notFoundTextView.setVisibility(VISIBLE);
+                    } else {
+                        // recycler
+                        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                        recyclerView.setAdapter(new RecordingListAdapter(recordingList, isDeleteActivated, getApplicationContext()));
 
-                    notFoundTextView.setVisibility(View.GONE);
+                        notFoundTextView.setVisibility(View.GONE);
+                    }
                 }
             }
         }
-        cursor.close();
-
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 
     private boolean checkFileDirection(String path) {

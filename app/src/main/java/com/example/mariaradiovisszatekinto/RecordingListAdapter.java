@@ -18,6 +18,7 @@ import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class RecordingListAdapter extends RecyclerView.Adapter<RecordingListAdapter.ViewHolder> {
@@ -71,14 +72,18 @@ public class RecordingListAdapter extends RecyclerView.Adapter<RecordingListAdap
 
     private void deleteRecording(ArrayList<AudioModel> recordingList, int adapterPosition) {
 
+
         File file = new File(recordingList.get(adapterPosition).path);
+
         if (file.delete()) {
             notifyItemRemoved(adapterPosition);
             recordingList.remove(adapterPosition);
-
+            System.out.println("sikerűtt");
             MyMediaPlayer.getInstance().pause();
         }
-        
+
+        System.out.println("Deleted{position: "+adapterPosition+"path: "+recordingList.get(adapterPosition).path);
+
     }
 
     @Override
