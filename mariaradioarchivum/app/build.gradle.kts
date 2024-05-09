@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    kotlin("kapt")
+    alias(libs.plugins.daggerHilt)
 }
 
 android {
@@ -60,10 +62,9 @@ dependencies {
     implementation(libs.androidx.material3)
 
 
-    implementation(libs.dagger.hilt)
-    implementation(libs.dagger.hilt.compiler)
+    implementation(libs.dagger.hilt.android)
+    kapt(libs.dagger.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
 
     testImplementation(libs.junit)
 
