@@ -29,7 +29,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt" }
-
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

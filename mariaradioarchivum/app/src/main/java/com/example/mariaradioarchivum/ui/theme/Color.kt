@@ -2,6 +2,9 @@ package com.example.mariaradioarchivum.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val TransparentWhite = Color(0xC3FFFFFF)
+val TransparentBlack = Color(0xC3000000)
+
 val Blue10 = Color(0xFF002233)
 val Blue20 = Color(0xFF004466)
 val Blue30 = Color(0xFF006699)
@@ -36,15 +39,18 @@ val Red10 = Color(0xFF410001)
 val Red20 = Color(0xFF680003)
 val Red30 = Color(0xFF930006)
 val Red40 = Color(0xFFBA1B1B)
+val Red60 = Color(0xFFe23636)
 val Red80 = Color(0xFFFFB4A9)
 val Red90 = Color(0xFFFFDAD4)
 
-val Grey10 = Color(0xFF191C1D)
+val Grey05 = Color(0xFF0d0d0d)
+val Grey10 = Color(0xFF0F1011)
 val Grey20 = Color(0xFF2D3132)
 val Grey90 = Color(0xFFE0E3E3)
 val Grey95 = Color(0xFFEFF1F1)
 val Grey99 = Color(0xFFFBFDFD)
 
+val BlueGrey05 = Color(0xFF0a100f)
 val BlueGrey30 = Color(0xFF31545B)
 val BlueGrey50 = Color(0xFF52998A)
 val BlueGrey60 = Color(0xFF74AAA6)

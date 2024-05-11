@@ -18,59 +18,70 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = Blue80,
-    onPrimary = Blue20,
+    onPrimary = Blue10,
     primaryContainer = Blue30,
     onPrimaryContainer = Blue90,
     inversePrimary = Blue40,
     secondary = DarkBlue80,
-    onSecondary = DarkBlue20,
+    onSecondary = DarkBlue10,
     secondaryContainer = DarkBlue30,
     onSecondaryContainer = DarkBlue90,
+
     tertiary = Pink80,
-    onTertiary = Pink20,
-    tertiaryContainer = Pink30,
-    onTertiaryContainer = Pink90,
+    onTertiary = Pink10,
+    tertiaryContainer = Pink90,
+    onTertiaryContainer = Pink10,
+
     error = Red80,
-    onError = Red20,
+    onError = Red10,
     errorContainer = Red30,
     onErrorContainer = Red90,
-    background = Grey10,
+    background = Grey05,
     onBackground = Grey90,
     surface = BlueGrey30,
     onSurface = BlueGrey80,
     inverseSurface = Grey90,
     inverseOnSurface = Grey10,
-    surfaceVariant = BlueGrey30,
+
+    surfaceVariant = TransparentBlack,
     onSurfaceVariant = BlueGrey80,
+
     outline = BlueGrey80
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Blue40,
-    onPrimary = Color.White,
+    onPrimary = Blue90,
     primaryContainer = Blue90,
     onPrimaryContainer = Blue10,
     inversePrimary = Blue80,
+
     secondary = DarkBlue40,
-    onSecondary = Color.White,
+    onSecondary = Blue90,
     secondaryContainer = DarkBlue90,
     onSecondaryContainer = DarkBlue10,
+
     tertiary = Pink40,
-    onTertiary = Color.White,
+    onTertiary = Pink90,
     tertiaryContainer = Pink90,
     onTertiaryContainer = Pink10,
+
     error = Red40,
-    onError = Color.White,
+    onError = Red90,
     errorContainer = Red90,
     onErrorContainer = Red10,
+
     background = Grey99,
     onBackground = Grey10,
-    surface = BlueGrey90,
-    onSurface = BlueGrey30,
+
+    surface = Color.White,
+    onSurface = BlueGrey05,
     inverseSurface = Grey20,
     inverseOnSurface = Grey95,
-    surfaceVariant = BlueGrey90,
-    onSurfaceVariant = BlueGrey30,
+
+    surfaceVariant = TransparentWhite,
+    onSurfaceVariant = BlueGrey05,
+
     outline = BlueGrey50
 )
 
