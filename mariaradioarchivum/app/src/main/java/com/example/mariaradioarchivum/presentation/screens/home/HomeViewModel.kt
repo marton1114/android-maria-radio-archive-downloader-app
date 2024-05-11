@@ -19,6 +19,9 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvent.ChangeDeleteButtonVisibilityEvent -> {
                 uiState = uiState.copy(isDeletingModeOn = !uiState.isDeletingModeOn)
             }
+            is HomeUiEvent.ChangeAddRecordingSheetVisibilityEvent -> {
+                uiState = uiState.copy(isAddRecordingSheetVisible = !uiState.isAddRecordingSheetVisible)
+            }
         }
     }
 }

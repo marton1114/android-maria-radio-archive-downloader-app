@@ -80,7 +80,7 @@ private val LightColorScheme = lightColorScheme(
     inverseOnSurface = Grey95,
 
     surfaceVariant = TransparentWhite,
-    onSurfaceVariant = BlueGrey05,
+    onSurfaceVariant = BlueGrey30,
 
     outline = BlueGrey50
 )

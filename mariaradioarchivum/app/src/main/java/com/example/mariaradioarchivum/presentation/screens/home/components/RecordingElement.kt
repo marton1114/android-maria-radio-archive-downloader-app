@@ -1,4 +1,4 @@
-package com.example.mariaradioarchivum.presentation.screens.home
+package com.example.mariaradioarchivum.presentation.screens.home.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,7 +61,7 @@ fun RecordingElement(
     onTrashClicked: () -> Unit
 ) {
     var playButton = Icons.Default.PlayArrow
-    var textColor = MaterialTheme.colorScheme.onPrimaryContainer
+    var textColor = MaterialTheme.colorScheme.onSurfaceVariant
     var iconColor = MaterialTheme.colorScheme.primary
 
     if (isPlaying) {
@@ -87,7 +88,8 @@ fun RecordingElement(
                 modifier = Modifier.weight(5F),
                 verticalArrangement = Arrangement.Center,
             ) {
-                Text(text = title, style = MaterialTheme.typography.titleLarge, color = textColor)
+                Text(text = title, style = MaterialTheme.typography.titleLarge, color = textColor,
+                    fontWeight = FontWeight.Bold)
                 Text(text = date, style = MaterialTheme.typography.titleSmall,
                     fontFamily = FontFamily.Monospace, color = textColor)
             }
