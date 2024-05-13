@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mariaradioarchivum.presentation.screens.home.components.AddRecordingSheet
+import com.example.mariaradioarchivum.presentation.screens.home.components.MediaPlayerSheet
 import com.example.mariaradioarchivum.presentation.screens.home.components.RecordingElement
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +36,9 @@ fun HomeScreen(
     val uiState = viewModel.uiState
 
     val addRecordingSheetState = rememberModalBottomSheetState()
+    val mediaPlayerSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     var deleteButtonColor = MaterialTheme.colorScheme.errorContainer
     if (uiState.isDeletingModeOn) {
@@ -87,9 +91,11 @@ fun HomeScreen(
                 modifier = Modifier.padding(10.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                RecordingElement("Teszt cím 1", "2024.01.12. 14:00", true, uiState.isDeletingModeOn, {})
-                RecordingElement("Teszt cím 124", "2024.01.12. 14:00", false, uiState.isDeletingModeOn, {})
-                RecordingElement("Teszt cím 41", "2024.01.12. 14:00", false, uiState.isDeletingModeOn, {})
+                RecordingElement("Teszt cím 1", "2024.01.12. 14:00", true, uiState.isDeletingModeOn, {}) {
+                    viewModel.onEvent(HomeUiEvent.ChangeMediaPlayerSheetVisibilityEvent)
+                }
+                RecordingElement("Teszt cím 124", "2024.01.12. 14:00", false, uiState.isDeletingModeOn, {}) {}
+                RecordingElement("Teszt cím 41", "2024.01.12. 14:00", false, uiState.isDeletingModeOn, {}) {}
             }
         }
     }
@@ -99,6 +105,15 @@ fun HomeScreen(
             sheetState = addRecordingSheetState,
             onDownloadClick = {},
             onDismissRequest = { viewModel.onEvent(HomeUiEvent.ChangeAddRecordingSheetVisibilityEvent) }
+        )
+    }
+    if (uiState.isMediaPlayerSheetVisible) {
+        MediaPlayerSheet(
+            title = "Teszt cím",
+            date = "2024.01.14. 14:00",
+            isPlaying = false,
+            sheetState = mediaPlayerSheetState,
+            onDismissRequest = { viewModel.onEvent(HomeUiEvent.ChangeMediaPlayerSheetVisibilityEvent) }
         )
     }
 }

@@ -22,6 +22,9 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvent.ChangeAddRecordingSheetVisibilityEvent -> {
                 uiState = uiState.copy(isAddRecordingSheetVisible = !uiState.isAddRecordingSheetVisible)
             }
+            is HomeUiEvent.ChangeMediaPlayerSheetVisibilityEvent -> {
+                uiState = uiState.copy(isMediaPlayerSheetVisible = !uiState.isMediaPlayerSheetVisible)
+            }
         }
     }
 }

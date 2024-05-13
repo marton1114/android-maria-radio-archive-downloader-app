@@ -7,4 +7,5 @@ import androidx.compose.material3.SheetValue
 data class HomeUiState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val isDeletingModeOn: Boolean = false,
     val isAddRecordingSheetVisible: Boolean = false,
+    val isMediaPlayerSheetVisible: Boolean = false,
 )

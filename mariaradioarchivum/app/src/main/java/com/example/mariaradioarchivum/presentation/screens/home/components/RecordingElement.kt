@@ -2,6 +2,7 @@ package com.example.mariaradioarchivum.presentation.screens.home.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
@@ -58,7 +59,8 @@ fun RecordingElement(
     date: String,
     isPlaying: Boolean = false,
     isDeleteVisible: Boolean = false,
-    onTrashClicked: () -> Unit
+    onTrashClicked: () -> Unit,
+    onClick: () -> Unit,
 ) {
     var playButton = Icons.Default.PlayArrow
     var textColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -70,7 +72,7 @@ fun RecordingElement(
         iconColor = MaterialTheme.colorScheme.tertiary
     }
 
-    Card {
+    Card(onClick = onClick) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -94,17 +96,17 @@ fun RecordingElement(
                     fontFamily = FontFamily.Monospace, color = textColor)
             }
             Row(
-                modifier = Modifier.weight(2F),
+                modifier = Modifier.weight(3F),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(onClick = onTrashClicked, modifier = Modifier.size(60.dp)) {
+                IconButton(onClick = {}, modifier = Modifier.size(60.dp)) {
                     Icon(playButton, tint = iconColor, contentDescription = null)
                 }
                 AnimatedVisibility(
                     visible = isDeleteVisible,
                     enter = slideInHorizontally { 100 },
-                    exit = slideOutHorizontally { 100 }
+                    exit = fadeOut()
                 ) {
                     IconButton(onClick = onTrashClicked, modifier = Modifier.size(60.dp)) {
                         Icon(Icons.Default.Delete, contentDescription = null,
