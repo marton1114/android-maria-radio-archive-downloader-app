@@ -1,7 +1,6 @@
 package com.example.mariaradioarchivum.presentation.screens.home.components
 
 import android.graphics.drawable.Icon
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,16 +40,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.mariaradioarchivum.data.model.Recording
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaPlayerSheet(
-    title: String,
-    date: String,
-    isPlaying: Boolean,
     sheetState: SheetState,
-    onDismissRequest: () -> Unit
+    recording: Recording,
+    onDismissRequest: () -> Unit,
+    sliderValue: Float,
+    onSliderValueChange: (value: Float) -> Unit,
+    isPlaying: Boolean,
+    onJumpBackClick: () -> Unit,
+    onSkipBackwardClick: () -> Unit,
+    onPlayPauseClick: () -> Unit,
+    onSkipForwardClick: () -> Unit,
+    onJumpForwardClick: () -> Unit,
 ) {
+    fun convertToMMSS(millis: Long): String {
+        return String.format(
+            Locale.ENGLISH,"%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
+        )
+    }
+
+    val playIcon = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         dragHandle = null,
@@ -88,8 +106,8 @@ fun MediaPlayerSheet(
                     Column(
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = title, style = MaterialTheme.typography.titleLarge)
-                        Text(text = date, style = MaterialTheme.typography.titleMedium)
+                        Text(text = recording.title, style = MaterialTheme.typography.titleLarge)
+                        Text(text = recording.date, style = MaterialTheme.typography.titleMedium)
                     }
                 }
             }
@@ -112,12 +130,16 @@ fun MediaPlayerSheet(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Spacer(modifier = Modifier.height(6.dp))
-                    Slider(value = 0.5F, onValueChange = {})
+                    Slider(
+                        value = sliderValue,
+                        onValueChange = { onSliderValueChange(it) },
+                        valueRange = 0F..recording.duration.toFloat()
+                    )
                     Row(
                         modifier = Modifier.padding(6.dp)
                     ) {
-                        Text(text = "00:00", modifier = Modifier.weight(1F), textAlign = TextAlign.Start)
-                        Text(text = "59:59", modifier = Modifier.weight(1F), textAlign = TextAlign.End)
+                        Text(text = convertToMMSS(recording.position.toLong()), modifier = Modifier.weight(1F), textAlign = TextAlign.Start)
+                        Text(text = convertToMMSS(recording.duration.toLong()), modifier = Modifier.weight(1F), textAlign = TextAlign.End)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
@@ -126,25 +148,24 @@ fun MediaPlayerSheet(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         FilledIconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onJumpBackClick,
                             colors = IconButtonDefaults.filledIconButtonColors().copy(
                                 containerColor = MaterialTheme.colorScheme.tertiary,
                                 contentColor = MaterialTheme.colorScheme.onTertiary
                             )
                         ) { Icon(imageVector = Icons.Rounded.Replay5, contentDescription = null) }
-                        FilledIconButton(onClick = { /*TODO*/ },
+                        FilledIconButton(onClick = onSkipBackwardClick,
                             modifier = Modifier.size(54.dp),
                             colors = IconButtonDefaults.filledIconButtonColors().copy(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary
                             )
                         ) { Icon(imageVector = Icons.Rounded.SkipPrevious, contentDescription = null) }
-                        FilledIconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(68.dp)) {
-                            Icon(imageVector = Icons.Rounded.Pause, contentDescription = null)
-//                            Icon(imageVector = Icons.Rounded.PlayArrow, contentDescription = null)
+                        FilledIconButton(onClick = onPlayPauseClick, modifier = Modifier.size(68.dp)) {
+                            Icon(imageVector = playIcon, contentDescription = null)
                         }
                         FilledIconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onSkipForwardClick,
                             modifier = Modifier.size(54.dp),
                             colors = IconButtonDefaults.filledIconButtonColors().copy(
                                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -152,7 +173,7 @@ fun MediaPlayerSheet(
                             )
                         ) { Icon(imageVector = Icons.Rounded.SkipNext, contentDescription = null) }
                         FilledIconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onJumpForwardClick,
                             colors = IconButtonDefaults.filledIconButtonColors().copy(
                                 containerColor = MaterialTheme.colorScheme.tertiary,
                                 contentColor = MaterialTheme.colorScheme.onTertiary
@@ -166,4 +187,6 @@ fun MediaPlayerSheet(
             Spacer(modifier = Modifier.height(42.dp))
         }
     }
+
+
 }

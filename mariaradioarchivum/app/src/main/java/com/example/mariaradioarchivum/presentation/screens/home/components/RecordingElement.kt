@@ -59,6 +59,7 @@ fun RecordingElement(
     date: String,
     isPlaying: Boolean = false,
     isDeleteVisible: Boolean = false,
+    onPlayClick: () -> Unit,
     onTrashClicked: () -> Unit,
     onClick: () -> Unit,
 ) {
@@ -90,17 +91,20 @@ fun RecordingElement(
                 modifier = Modifier.weight(5F),
                 verticalArrangement = Arrangement.Center,
             ) {
-                Text(text = title, style = MaterialTheme.typography.titleLarge, color = textColor,
-                    fontWeight = FontWeight.Bold)
-                Text(text = date, style = MaterialTheme.typography.titleSmall,
-                    fontFamily = FontFamily.Monospace, color = textColor)
+                if (title.trim() != "") {
+                    Text(text = title, style = MaterialTheme.typography.titleLarge, color = textColor,
+                        fontWeight = FontWeight.Bold)
+                    Text(text = date, style = MaterialTheme.typography.titleSmall, color = textColor)
+                } else {
+                    Text(text = date, style = MaterialTheme.typography.titleMedium, color = textColor)
+                }
             }
             Row(
                 modifier = Modifier.weight(3F),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(onClick = {}, modifier = Modifier.size(60.dp)) {
+                IconButton(onClick = onPlayClick, modifier = Modifier.size(60.dp)) {
                     Icon(playButton, tint = iconColor, contentDescription = null)
                 }
                 AnimatedVisibility(

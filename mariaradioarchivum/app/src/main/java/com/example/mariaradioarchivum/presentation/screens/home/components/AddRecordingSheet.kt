@@ -1,6 +1,7 @@
 package com.example.mariaradioarchivum.presentation.screens.home.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,13 +31,27 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.mariaradioarchivum.data.model.Recording
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRecordingSheet(
     sheetState: SheetState,
-    onDownloadClick: () -> Unit,
-    onDismissRequest: () -> Unit
+    recordingNameValue: String,
+    onRecordingValueChange: (value: String) -> Unit,
+    onDismissRequest: () -> Unit,
+
+    recordingDate: String,
+    onPreviousDayClick: () -> Unit,
+    onDateClick: () -> Unit,
+    onNextDayClick: () -> Unit,
+
+    recordingInterval: String,
+    onPreviousIntervalClick: () -> Unit,
+    onIntervalClick: () -> Unit,
+    onNextIntervalClick: () -> Unit,
+
+    onDownloadClick: () -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -77,32 +92,48 @@ fun AddRecordingSheet(
             }
             Text(text = "Mentett felvétel címe", style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.outline)
-            OutlinedTextField(value = "Felvétel", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = recordingNameValue, onValueChange = { onRecordingValueChange(it) }, modifier = Modifier.fillMaxWidth())
             Text(text = "Dátum", style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.outline)
-            Row(modifier = Modifier.fillMaxWidth().height(54.dp).border(1.dp,
-                MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp)),
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp)
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp)
+                ),
                 verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = onPreviousDayClick) {
                     Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                         contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
-                Text(text = "2024.01.15", modifier = Modifier.weight(1F).padding(5.dp),
+                Text(text = recordingDate, modifier = Modifier
+                    .clickable { onDateClick() }
+                    .weight(1F)
+                    .padding(5.dp),
                     textAlign = TextAlign.Center)
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = onNextDayClick) {
                     Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
                         contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
             }
             Text(text = "Időintervallum", style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.outline)
-            Row(modifier = Modifier.fillMaxWidth().height(54.dp).border(1.dp,
-                MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp)),
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp)
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp)
+                ),
                 verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = onPreviousIntervalClick) {
                     Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                         contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
-                Text(text = "14:00 - 15:00", modifier = Modifier.weight(1F).padding(5.dp),
+                Text(text = recordingInterval, modifier = Modifier
+                    .clickable { onIntervalClick() }
+                    .weight(1F)
+                    .padding(5.dp),
                     textAlign = TextAlign.Center)
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = onNextIntervalClick) {
                     Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
                         contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
             }
