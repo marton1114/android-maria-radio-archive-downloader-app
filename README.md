@@ -8,4 +8,4 @@ majd a letöltött felvételeket ki tudja listázni és le tudja játszani egy e
 
 ## Képek
 
-![](https://raw.githubusercontent.com/marton1114/android-maria-radio-archive-downloader-app/main/screenshots/application.gif)
+<img src="[https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/main/list.jpg](https://raw.githubusercontent.com/marton1114/android-maria-radio-archive-downloader-app/main/screenshots/application.gif)" width="24%" height="24%"> 
