@@ -8,4 +8,4 @@ majd a letöltött felvételeket ki tudja listázni és le tudja játszani egy e
 
 ## Képek
 
-  <img src="https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/screenshots/application.gif" width="24%" height="24%">
+![](https://raw.githubusercontent.com/marton1114/Maria_radio_archiver/screenshots/application.gif)
