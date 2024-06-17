@@ -96,7 +96,9 @@ fun RecordingElement(
                         fontWeight = FontWeight.Bold)
                     Text(text = date, style = MaterialTheme.typography.titleSmall, color = textColor)
                 } else {
-                    Text(text = date, style = MaterialTheme.typography.titleMedium, color = textColor)
+                    Text(text = "Cím nélküli felvétel", style = MaterialTheme.typography.titleLarge, color = textColor,
+                        fontWeight = FontWeight.Bold)
+                    Text(text = date, style = MaterialTheme.typography.titleSmall, color = textColor)
                 }
             }
             Row(

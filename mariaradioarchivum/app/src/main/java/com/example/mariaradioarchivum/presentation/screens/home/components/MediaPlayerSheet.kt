@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.mariaradioarchivum.data.model.Recording
@@ -92,7 +93,7 @@ fun MediaPlayerSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Card() {
+            Card {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,8 +107,13 @@ fun MediaPlayerSheet(
                     Column(
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = recording.title, style = MaterialTheme.typography.titleLarge)
-                        Text(text = recording.date, style = MaterialTheme.typography.titleMedium)
+                        if (recording.title.trim() != "") {
+                            Text(text = recording.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text(text = recording.date, style = MaterialTheme.typography.titleMedium)
+                        } else {
+                            Text(text = "Cím nélküli felvétel", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text(text = recording.date, style = MaterialTheme.typography.titleMedium)
+                        }
                     }
                 }
             }

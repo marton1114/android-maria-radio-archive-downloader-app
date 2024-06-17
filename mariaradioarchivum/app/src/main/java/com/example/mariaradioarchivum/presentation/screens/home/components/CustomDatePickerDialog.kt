@@ -33,21 +33,21 @@ fun CustomDatePickerDialog(
 
     val selectedDate = datePickerState.selectedDateMillis?.let {
         convertMillisToDate(it)
-    } ?: ""
+    } ?: convertMillisToDate(System.currentTimeMillis())
 
     val epochDays = datePickerState.selectedDateMillis?.let {
         Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate().toEpochDay()
-    } ?: 0
+    } ?: Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate().toEpochDay()
 
 
     DatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
-            Button(onClick = {
-                onDateSelected(selectedDate, epochDays)
-                onDismiss()
-            }
-
+            Button(
+                onClick = {
+                    onDateSelected(selectedDate, epochDays)
+                    onDismiss()
+                }
             ) {
                 Text(text = "OK")
             }

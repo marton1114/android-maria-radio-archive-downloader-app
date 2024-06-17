@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mariaradioarchivum.presentation.screens.home.components.AddRecordingSheet
 import com.example.mariaradioarchivum.presentation.screens.home.components.CustomDatePickerDialog
@@ -49,7 +51,6 @@ fun HomeScreen(
         skipPartiallyExpanded = true
     )
 
-    val datePickerState = rememberDatePickerState()
     val context = LocalContext.current
     var deleteButtonColor = MaterialTheme.colorScheme.errorContainer
     if (uiState.isDeletingModeOn) {
@@ -82,12 +83,13 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(it)
                 .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            MaterialTheme.colorScheme.tertiaryContainer
-                        )
-                    )
+                    MaterialTheme.colorScheme.inverseOnSurface
+//                    brush = Brush.verticalGradient(
+//                        colors = listOf(
+//                            MaterialTheme.colorScheme.primaryContainer,
+//                            MaterialTheme.colorScheme.tertiaryContainer
+//                        )
+//                    )
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -201,5 +203,11 @@ fun HomeScreen(
             localDateFormatter = uiState.dateFormatter,
             onDismiss = { viewModel.onEvent(HomeUiEvent.ChangeDatePickerDialogVisibilityEvent) },
         )
+    }
+
+    if (uiState.isLoadingDialogVisible) {
+        Dialog(onDismissRequest = { /*TODO*/ }) {
+            CircularProgressIndicator()
+        }
     }
 }

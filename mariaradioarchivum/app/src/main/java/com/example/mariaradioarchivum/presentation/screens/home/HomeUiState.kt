@@ -15,6 +15,7 @@ data class HomeUiState(
     val isAddRecordingSheetVisible: Boolean = false,
     val isMediaPlayerSheetVisible: Boolean = false,
     val isDatePickerDialogVisible: Boolean = false,
+    val isLoadingDialogVisible: Boolean = false,
 
     val idOfPlayingRecording: Int = -1,
     val recordingToPlay: Recording = Recording(),

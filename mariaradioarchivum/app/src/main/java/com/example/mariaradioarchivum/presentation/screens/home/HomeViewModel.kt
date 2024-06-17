@@ -1,6 +1,8 @@
 package com.example.mariaradioarchivum.presentation.screens.home
 
 import android.content.Context
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
@@ -8,6 +10,7 @@ import android.os.Environment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,13 +30,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    @ApplicationContext val context: Context,
     private val recordingsRepository: RecordingRepository,
     private val downloaderRepository: DownloaderRepository
 ): ViewModel() {
     var uiState by mutableStateOf(HomeUiState())
         private set
 
-//    private var mediaPlayer: MediaPlayer? = null
+    private var audioManager: AudioManager? = null
+    private var audioFocusRequest: AudioFocusRequest
     init {
         viewModelScope.launch {
             getRecordings()
@@ -41,9 +46,28 @@ class HomeViewModel @Inject constructor(
 
         uiState = uiState.copy(
             recordingFormattedDate = LocalDate.ofEpochDay(uiState.recordingDate).format(uiState.dateFormatter),
-            recordingFormattedInterval = "${uiState.recordingInterval}:00-${(uiState.recordingInterval + 1) % 24}:00"
+            recordingFormattedInterval = "${uiState.recordingInterval}:00 - ${(uiState.recordingInterval + 1) % 24}:00"
         )
 
+        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setOnAudioFocusChangeListener { focusChange ->
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
+                    ) {
+                        if (uiState.mediaPlayer?.isPlaying == true) {
+                            uiState = uiState.copy(
+                                idOfPlayingRecording = -1
+                            )
+                            if (uiState.mediaPlayer != null) {
+                                uiState = uiState.copy(
+                                    recordingToPlay = uiState.recordingToPlay.copy(position = uiState.mediaPlayer!!.currentPosition)
+                                )
+                            }
+                            uiState.mediaPlayer?.pause()
+                            updateRecording(uiState.recordingToPlay)
+                        }
+                    }
+            }.build()
     }
 
     fun onEvent(event: HomeUiEvent) {
@@ -109,11 +133,18 @@ class HomeViewModel @Inject constructor(
                 )
                 val uri = uriString.toUri()
 
+                uiState = uiState.copy(
+                    isLoadingDialogVisible = true
+                )
+
                 downloaderRepository.downloadFile(
                     uriString,
                     onComplete = {
-                        println("Kész")
                         addRecording(event.context, uri)
+
+                        uiState = uiState.copy(
+                            isLoadingDialogVisible = false
+                        )
                     }
                 )
             }
@@ -160,16 +191,6 @@ class HomeViewModel @Inject constructor(
                     uiState.mediaPlayer?.seekTo(uiState.recordingToPlay.position)
                 }
             }
-            is HomeUiEvent.IncrementPlayedRecordingEvent -> {
-                val index = uiState.recordings.indexOfFirst { it.id == uiState.recordingToPlay.id }
-
-                onEvent(HomeUiEvent.UpdatePlayedRecordingEvent(event.context, uiState.recordings[(index + 1) % uiState.recordings.size]))
-            }
-            is HomeUiEvent.DecrementPlayedRecordingEvent -> {
-                val index = uiState.recordings.indexOfFirst { it.id == uiState.recordingToPlay.id }
-
-                onEvent(HomeUiEvent.UpdatePlayedRecordingEvent(event.context, uiState.recordings[(index - 1 + uiState.recordings.size) % uiState.recordings.size]))
-            }
             is HomeUiEvent.PlayPauseRecordingEvent -> {
                 if (uiState.mediaPlayer?.isPlaying == true) {
                     uiState = uiState.copy(
@@ -183,19 +204,29 @@ class HomeViewModel @Inject constructor(
                     uiState.mediaPlayer?.pause()
                     updateRecording(uiState.recordingToPlay)
 
+                    audioManager?.abandonAudioFocusRequest(audioFocusRequest);
+
                 } else {
+                    val result = audioManager!!.requestAudioFocus(audioFocusRequest)
+
+                    if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                        uiState = uiState.copy(
+                            idOfPlayingRecording = uiState.recordingToPlay.id
+                        )
+                        uiState.mediaPlayer?.start()
+                    }
+
+                }
+
+            }
+            is HomeUiEvent.PlayRecordingEvent -> {
+                val result = audioManager!!.requestAudioFocus(audioFocusRequest)
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     uiState = uiState.copy(
                         idOfPlayingRecording = uiState.recordingToPlay.id
                     )
                     uiState.mediaPlayer?.start()
                 }
-
-            }
-            is HomeUiEvent.PlayRecordingEvent -> {
-                uiState = uiState.copy(
-                    idOfPlayingRecording = uiState.recordingToPlay.id
-                )
-                uiState.mediaPlayer?.start()
             }
             is HomeUiEvent.UpdateRecordingPosition -> {
                 uiState = uiState.copy(
