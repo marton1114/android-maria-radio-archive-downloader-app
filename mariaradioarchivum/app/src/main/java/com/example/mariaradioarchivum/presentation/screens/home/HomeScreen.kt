@@ -3,6 +3,7 @@ package com.example.mariaradioarchivum.presentation.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,38 +11,38 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mariaradioarchivum.presentation.screens.home.components.AddRecordingSheet
 import com.example.mariaradioarchivum.presentation.screens.home.components.CustomDatePickerDialog
 import com.example.mariaradioarchivum.presentation.screens.home.components.MediaPlayerSheet
 import com.example.mariaradioarchivum.presentation.screens.home.components.RecordingElement
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val uiState = viewModel.uiState
 
     val addRecordingSheetState = rememberModalBottomSheetState(
@@ -51,7 +52,6 @@ fun HomeScreen(
         skipPartiallyExpanded = true
     )
 
-    val context = LocalContext.current
     var deleteButtonColor = MaterialTheme.colorScheme.errorContainer
     if (uiState.isDeletingModeOn) {
         deleteButtonColor = MaterialTheme.colorScheme.error
@@ -82,15 +82,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-                .background(
-                    MaterialTheme.colorScheme.inverseOnSurface
-//                    brush = Brush.verticalGradient(
-//                        colors = listOf(
-//                            MaterialTheme.colorScheme.primaryContainer,
-//                            MaterialTheme.colorScheme.tertiaryContainer
-//                        )
-//                    )
-                ),
+                .background(MaterialTheme.colorScheme.inverseOnSurface),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopAppBar(title = {
@@ -102,7 +94,8 @@ fun HomeScreen(
             
             LazyColumn(
                 modifier = Modifier.padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                contentPadding = PaddingValues(bottom = 136.dp)
             ) {
                 items(uiState.recordings) { recording ->
                     RecordingElement(
@@ -115,7 +108,8 @@ fun HomeScreen(
                             viewModel.onEvent(HomeUiEvent.PlayPauseRecordingEvent)
                         },
                         onTrashClicked = {
-                            viewModel.onEvent(HomeUiEvent.DeleteRecordingEvent(context, recording))
+                            viewModel.onEvent(HomeUiEvent.SetEditedRecordingElementEvent(recording))
+                            viewModel.onEvent(HomeUiEvent.ChangeDeleteDialogVisibilityEvent)
                         }
                     ) {
                         viewModel.onEvent(HomeUiEvent.UpdatePlayedRecordingEvent(context, recording))
@@ -125,6 +119,38 @@ fun HomeScreen(
                 }
             }
         }
+    }
+
+    if (uiState.isDeleteDialogVisible) {
+        AlertDialog(
+            title = { Text(text = "Törlés véglegesítése") },
+            text = {
+                Text(text = "Biztos benne, hogy törölni szeretné a következő felvételt?\n" +
+                        "${uiState.recordingToEdit.title}\n" +
+                        uiState.recordingToEdit.date
+                )
+            },
+            onDismissRequest = { viewModel.onEvent(HomeUiEvent.ChangeDeleteDialogVisibilityEvent) },
+            dismissButton = {
+                OutlinedButton(onClick = { viewModel.onEvent(HomeUiEvent.ChangeDeleteDialogVisibilityEvent) }) {
+                    Text(text = "Mégsem")
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.onEvent(HomeUiEvent.DeleteEditedRecordingEvent)
+                        viewModel.onEvent(HomeUiEvent.ChangeDeleteDialogVisibilityEvent)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError,
+                    )
+                ) {
+                    Text(text = "Törlés")
+                }
+            }
+        )
     }
 
     if (uiState.isAddRecordingSheetVisible) {
@@ -149,14 +175,6 @@ fun HomeScreen(
     }
 
     if (uiState.isMediaPlayerSheetVisible) {
-        // currently the best way to handle slider with mediaplayer
-        LaunchedEffect(key1 = Unit) {
-            while (uiState.isMediaPlayerSheetVisible) {
-                viewModel.onEvent(HomeUiEvent.UpdateRecordingPosition(uiState.mediaPlayer?.currentPosition ?: 0))
-                delay(1000)
-            }
-        }
-
         MediaPlayerSheet(
             sheetState = mediaPlayerSheetState,
             recording = uiState.recordingToPlay,
@@ -164,29 +182,15 @@ fun HomeScreen(
             isPlaying = (uiState.recordingToPlay.id == uiState.idOfPlayingRecording),
             sliderValue = uiState.recordingToPlay.position.toFloat(),
             onSliderValueChange = { value ->
-                uiState.mediaPlayer?.seekTo(value.toInt())
                 viewModel.onEvent(HomeUiEvent.UpdateRecordingPosition(value.toInt()))
             },
             onJumpForwardClick = {
-                val currentPosition = uiState.mediaPlayer?.currentPosition ?: 0
-                val duration = uiState.recordingToPlay.duration
-
-                if (currentPosition + 5000 <= duration)
-                    uiState.mediaPlayer?.seekTo(currentPosition + 5000)
-                else
-                    uiState.mediaPlayer?.seekTo(duration)
-
+                viewModel.onEvent(HomeUiEvent.JumpForwardMillisecondsInPlayedRecording(5000))
             },
             onJumpBackClick = {
-                val currentPosition: Int = uiState.mediaPlayer?.currentPosition ?: 0
-                if (currentPosition - 5000 >= 0)
-                    uiState.mediaPlayer?.seekTo(currentPosition - 5000)
-                else
-                    uiState.mediaPlayer?.seekTo(0)
+                viewModel.onEvent(HomeUiEvent.JumpBackMillisecondsInPlayedRecording(5000))
             },
-            onPlayPauseClick = {
-                viewModel.onEvent(HomeUiEvent.PlayPauseRecordingEvent)
-            },
+            onPlayPauseClick = { viewModel.onEvent(HomeUiEvent.PlayPauseRecordingEvent) },
             onSkipBackwardClick = { HomeUiEvent.IncrementPlayedRecordingEvent(context) },
             onSkipForwardClick = { HomeUiEvent.DecrementPlayedRecordingEvent(context) },
         )
@@ -206,7 +210,7 @@ fun HomeScreen(
     }
 
     if (uiState.isLoadingDialogVisible) {
-        Dialog(onDismissRequest = { /*TODO*/ }) {
+        Dialog(onDismissRequest = { }) {
             CircularProgressIndicator()
         }
     }

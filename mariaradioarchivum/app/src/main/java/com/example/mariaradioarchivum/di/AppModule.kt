@@ -2,6 +2,8 @@ package com.example.mariaradioarchivum.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.mariaradioarchivum.PlaybackController
+import com.example.mariaradioarchivum.PlaybackControllerImpl
 import com.example.mariaradioarchivum.data.dao.RecordingDao
 import com.example.mariaradioarchivum.data.network.RecordingDb
 import com.example.mariaradioarchivum.data.repository.DownloaderRepository
@@ -40,5 +42,12 @@ object AppModule {
         @ApplicationContext context: Context
     ): DownloaderRepository = DownloaderRepositoryImpl(
         context = context
+    )
+
+    @Provides
+    fun providePlaybackController(
+        @ApplicationContext context: Context,
+    ): PlaybackController = PlaybackControllerImpl(
+        context = context,
     )
 }

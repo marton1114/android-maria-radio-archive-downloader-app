@@ -1,19 +1,16 @@
 package com.example.mariaradioarchivum.presentation.screens.home
 
 import android.content.Context
-import android.media.AudioFocusRequest
-import android.media.AudioManager
 import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Environment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mariaradioarchivum.PlaybackController
 import com.example.mariaradioarchivum.data.model.Recording
 import com.example.mariaradioarchivum.data.repository.DownloaderRepository
 import com.example.mariaradioarchivum.data.repository.RecordingRepository
@@ -32,13 +29,12 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     @ApplicationContext val context: Context,
     private val recordingsRepository: RecordingRepository,
-    private val downloaderRepository: DownloaderRepository
+    private val downloaderRepository: DownloaderRepository,
+    private val playbackController: PlaybackController
 ): ViewModel() {
     var uiState by mutableStateOf(HomeUiState())
         private set
 
-    private var audioManager: AudioManager? = null
-    private var audioFocusRequest: AudioFocusRequest
     init {
         viewModelScope.launch {
             getRecordings()
@@ -48,26 +44,15 @@ class HomeViewModel @Inject constructor(
             recordingFormattedDate = LocalDate.ofEpochDay(uiState.recordingDate).format(uiState.dateFormatter),
             recordingFormattedInterval = "${uiState.recordingInterval}:00 - ${(uiState.recordingInterval + 1) % 24}:00"
         )
-
-        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-        audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-            .setOnAudioFocusChangeListener { focusChange ->
-                if (focusChange == AudioManager.AUDIOFOCUS_LOSS || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-                    ) {
-                        if (uiState.mediaPlayer?.isPlaying == true) {
-                            uiState = uiState.copy(
-                                idOfPlayingRecording = -1
-                            )
-                            if (uiState.mediaPlayer != null) {
-                                uiState = uiState.copy(
-                                    recordingToPlay = uiState.recordingToPlay.copy(position = uiState.mediaPlayer!!.currentPosition)
-                                )
-                            }
-                            uiState.mediaPlayer?.pause()
-                            updateRecording(uiState.recordingToPlay)
-                        }
-                    }
-            }.build()
+        viewModelScope.launch {
+            playbackController.playbackState.collect { state ->
+                uiState = uiState.copy(
+                    idOfPlayingRecording = if (state.isPlaying) state.recordingId else -1,
+                    recordingToPlay = uiState.recordings.find { it.id == state.recordingId }
+                        ?.copy(position = state.position) ?: uiState.recordingToPlay,
+                )
+            }
+        }
     }
 
     fun onEvent(event: HomeUiEvent) {
@@ -88,7 +73,6 @@ class HomeViewModel @Inject constructor(
                 uiState = uiState.copy(isDatePickerDialogVisible = !uiState.isDatePickerDialogVisible)
             }
             is HomeUiEvent.DecreaseIntervalEvent -> {
-
                 uiState = uiState.copy(
                     recordingInterval = hourBefore(uiState.recordingInterval)
                 )
@@ -117,8 +101,10 @@ class HomeViewModel @Inject constructor(
                     recordingDate = LocalDate.ofEpochDay(uiState.recordingDate).plusDays(1).toEpochDay()
                 )
 
-                uiState = uiState.copy(recordingFormattedDate = LocalDate.ofEpochDay(uiState.recordingDate).format(
-                    uiState.dateFormatter))
+                uiState = uiState.copy(
+                    recordingFormattedDate = LocalDate.ofEpochDay(uiState.recordingDate).format(
+                    uiState.dateFormatter)
+                )
             }
             is HomeUiEvent.UpdateRecordingDateEvent -> {
                 uiState = uiState.copy(
@@ -127,20 +113,17 @@ class HomeViewModel @Inject constructor(
                 )
             }
             is HomeUiEvent.DownloadRecordingEvent -> {
+                uiState = uiState.copy(isLoadingDialogVisible = true)
+
                 val uriString = getMariaRadioArchiveUri(
                     uiState.recordingDate,
                     uiState.recordingInterval
-                )
-                val uri = uriString.toUri()
-
-                uiState = uiState.copy(
-                    isLoadingDialogVisible = true
                 )
 
                 downloaderRepository.downloadFile(
                     uriString,
                     onComplete = {
-                        addRecording(event.context, uri)
+                        addRecording(event.context, uriString.toUri())
 
                         uiState = uiState.copy(
                             isLoadingDialogVisible = false
@@ -148,92 +131,39 @@ class HomeViewModel @Inject constructor(
                     }
                 )
             }
-            is HomeUiEvent.DeleteRecordingEvent -> {
-                deleteRecording(event.recording)
+            is HomeUiEvent.DeleteEditedRecordingEvent -> {
+                onEvent(HomeUiEvent.PauseRecordingEvent)
+                deleteRecording(uiState.recordingToEdit)
+                if (uiState.recordingToPlay.id == uiState.recordingToEdit.id) {
+                    playbackController.setRecording(null, context)
+                }
+            }
+            is HomeUiEvent.ChangeDeleteDialogVisibilityEvent -> {
+                uiState = uiState.copy(isDeleteDialogVisible = ! uiState.isDeleteDialogVisible)
             }
             is HomeUiEvent.UpdatePlayedRecordingEvent -> {
-                if (uiState.mediaPlayer == null) {
-                    uiState = uiState.copy(
-                        recordingToPlay = event.recording
-                    )
-
-                    uiState = uiState.copy(
-                        idOfPlayingRecording = uiState.recordingToPlay.id
-                    )
-
-                    uiState = uiState.copy(
-                        mediaPlayer = MediaPlayer.create(
-                            event.context, uiState.recordings.last {
-                                it.id == uiState.idOfPlayingRecording
-                            }.path.toUri()
-                        )
-                    )
-                    uiState.mediaPlayer?.seekTo(uiState.recordingToPlay.position)
-
-                } else if (uiState.recordingToPlay.id != event.recording.id) {
-                    uiState = uiState.copy(
-                        recordingToPlay = event.recording
-                    )
-
-                    uiState = uiState.copy(
-                        idOfPlayingRecording = uiState.recordingToPlay.id
-                    )
-
-                    uiState.mediaPlayer?.reset()
-
-                    uiState = uiState.copy(
-                        mediaPlayer = MediaPlayer.create(
-                            event.context, uiState.recordings.last {
-                                it.id == uiState.idOfPlayingRecording
-                            }.path.toUri()
-                        )
-                    )
-                    uiState.mediaPlayer?.seekTo(uiState.recordingToPlay.position)
-                }
+                playbackController.setRecording(event.recording, event.context)
             }
             is HomeUiEvent.PlayPauseRecordingEvent -> {
-                if (uiState.mediaPlayer?.isPlaying == true) {
-                    uiState = uiState.copy(
-                        idOfPlayingRecording = -1
-                    )
-                    if (uiState.mediaPlayer != null) {
-                        uiState = uiState.copy(
-                            recordingToPlay = uiState.recordingToPlay.copy(position = uiState.mediaPlayer!!.currentPosition)
-                        )
-                    }
-                    uiState.mediaPlayer?.pause()
-                    updateRecording(uiState.recordingToPlay)
-
-                    audioManager?.abandonAudioFocusRequest(audioFocusRequest);
-
-                } else {
-                    val result = audioManager!!.requestAudioFocus(audioFocusRequest)
-
-                    if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                        uiState = uiState.copy(
-                            idOfPlayingRecording = uiState.recordingToPlay.id
-                        )
-                        uiState.mediaPlayer?.start()
-                    }
-
-                }
-
+                playbackController.playPause()
+            }
+            is HomeUiEvent.PauseRecordingEvent -> {
+                playbackController.pause()
             }
             is HomeUiEvent.PlayRecordingEvent -> {
-                val result = audioManager!!.requestAudioFocus(audioFocusRequest)
-                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    uiState = uiState.copy(
-                        idOfPlayingRecording = uiState.recordingToPlay.id
-                    )
-                    uiState.mediaPlayer?.start()
-                }
+                playbackController.play()
             }
             is HomeUiEvent.UpdateRecordingPosition -> {
-                uiState = uiState.copy(
-                    recordingToPlay = uiState.recordingToPlay.copy(
-                        position = event.value
-                    )
-                )
+                playbackController.updatePosition(event.value)
+            }
+            is HomeUiEvent.SetEditedRecordingElementEvent -> {
+                uiState = uiState.copy(recordingToEdit = event.recording)
+            }
+            is HomeUiEvent.JumpForwardMillisecondsInPlayedRecording -> {
+                playbackController.jumpForward(event.millis)
+            }
+            is HomeUiEvent.JumpBackMillisecondsInPlayedRecording -> {
+                playbackController.jumpBack(event.millis)
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.example.mariaradioarchivum.presentation.screens.home.components
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Replay5
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Forward5
 import androidx.compose.material.icons.rounded.LibraryMusic
@@ -139,7 +137,7 @@ fun MediaPlayerSheet(
                     Slider(
                         value = sliderValue,
                         onValueChange = { onSliderValueChange(it) },
-                        valueRange = 0F..recording.duration.toFloat()
+                        valueRange = 0F..recording.duration.toFloat(),
                     )
                     Row(
                         modifier = Modifier.padding(6.dp)
@@ -168,7 +166,7 @@ fun MediaPlayerSheet(
                             )
                         ) { Icon(imageVector = Icons.Rounded.SkipPrevious, contentDescription = null) }
                         FilledIconButton(onClick = onPlayPauseClick, modifier = Modifier.size(68.dp)) {
-                            Icon(imageVector = playIcon, contentDescription = null)
+                            Icon(imageVector = playIcon, contentDescription = null, modifier = Modifier.size(68.dp))
                         }
                         FilledIconButton(
                             onClick = onSkipForwardClick,

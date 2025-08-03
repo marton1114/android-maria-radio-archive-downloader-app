@@ -3,6 +3,7 @@ package com.example.mariaradioarchivum.presentation.screens.home.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
@@ -111,7 +112,7 @@ fun RecordingElement(
                 }
                 AnimatedVisibility(
                     visible = isDeleteVisible,
-                    enter = slideInHorizontally { 100 },
+                    enter = scaleIn(),
                     exit = fadeOut()
                 ) {
                     IconButton(onClick = onTrashClicked, modifier = Modifier.size(60.dp)) {

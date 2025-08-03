@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecordingDao {
-    @Query("SELECT * FROM recording_table ORDER BY id ASC")
+    @Query("SELECT * FROM recording_table ORDER BY id DESC")
     fun getRecordings(): Flow<List<Recording>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
